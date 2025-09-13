@@ -37,7 +37,9 @@ jobs:
           local-dir: ./publish/ 
           server-dir: ${{ secrets.FTP_SERVER_DIR }}
           protocol: ftps 
-          exclude: | 
-            **/*.pdb  # Debug symbols
+          exclude: |
+            **/*.pdb
             **/logs/**
+            **/.htaccess
+            **/web.config
           dangerous-clean-slate: false 
