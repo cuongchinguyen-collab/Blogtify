@@ -1,0 +1,52 @@
+name: CI/CD to FTP
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build project
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run tests
+        run: dotnet test --no-restore --verbosity normal 
+
+      - name: Publish project
+        run: |
+          dotnet publish \
+            --configuration Release \
+            --no-restore \
+            --output ./publish \
+            --self-contained true \
+            --runtime win-x64 \
+            -p:PublishSingleFile=true \
+            -p:PublishTrimmed=true 
+
+      - name: Deploy qua FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./publish/ 
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          protocol: ftps 
+          exclude: | 
+            **/*.pdb  # Debug symbols
+            **/logs/**
+          dangerous-clean-slate: false 
