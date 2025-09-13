@@ -6,6 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<EnableSIMD>false</EnableSIMD>
+		<RunAOTCompilation>false</RunAOTCompilation>
 		<NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
 		<StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
 		<MD2RazorDefaultBaseClass>Blogtify.Client.CustomComponentBase</MD2RazorDefaultBaseClass>
