@@ -30,9 +30,6 @@
 </div>
 
 @code {
-    private string? triggeredTextQuery;
-    private Type? selectedComponent;
-
     private List<PostDto> matched = [];
 
     private Task<SearchBoxDataProviderResult<PostDto>> ProvideSearchResults(SearchBoxDataProviderRequest request)
