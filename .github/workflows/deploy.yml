@@ -42,4 +42,4 @@ jobs:
             **/logs/**
             **/.htaccess
             **/web.config
-          dangerous-clean-slate: false 
+          dangerous-clean-slate: true 
