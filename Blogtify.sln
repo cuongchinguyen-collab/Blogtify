@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blogtify", "Blogtify\Blogtify\Blogtify.csproj", "{FD6FA2EE-6D6D-449E-A0F4-44E0298FA80B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blogtify.Client", "Blogtify\Blogtify.Client\Blogtify.Client.csproj", "{D59076EC-6763-4A74-B4B8-0183B0137993}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FD6FA2EE-6D6D-449E-A0F4-44E0298FA80B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD6FA2EE-6D6D-449E-A0F4-44E0298FA80B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD6FA2EE-6D6D-449E-A0F4-44E0298FA80B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD6FA2EE-6D6D-449E-A0F4-44E0298FA80B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D59076EC-6763-4A74-B4B8-0183B0137993}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D59076EC-6763-4A74-B4B8-0183B0137993}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D59076EC-6763-4A74-B4B8-0183B0137993}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D59076EC-6763-4A74-B4B8-0183B0137993}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {697FDA8A-E570-4207-87C3-EFF7A136A668}
+	EndGlobalSection
+EndGlobal

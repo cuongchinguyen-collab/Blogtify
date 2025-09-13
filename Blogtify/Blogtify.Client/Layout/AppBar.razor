@@ -1,0 +1,65 @@
+﻿@using Blogtify.Client.Models
+@using System.Reflection
+
+@inject NavigationManager NavigationManager
+
+<div class="row align-items-center">
+    <div class="col-5 col-md-7">
+        <a href="/">
+            <img src="logo.png" alt="SymphoniX" style="width: 80px" />
+        </a>
+    </div>
+    <div class="col-6 col-md-4">
+        <HxSearchBox DataProvider="ProvideSearchResults"
+                     TItem="PostDto" InputSize="InputSize.Regular"
+                     ItemTitleSelector="i => i.Title" MinimumLength="1"
+                     Placeholder="Tìm kiếm bài viết..."
+                     OnItemSelected="OnItemSelected" AllowTextQuery="@matched.Any()"
+                     OnTextQueryTriggered="OnTextQueryTriggered">
+            <DefaultContentTemplate>
+                <div class="p-2 text-muted">Nhập tiêu đề bài viết để tìm...</div>
+            </DefaultContentTemplate>
+            <NotFoundTemplate>
+                <div class="small py-2 px-3 text-muted">
+                    <HxIcon CssClass="me-2" Icon="BootstrapIcon.EmojiFrown" />
+                    Không tìm thấy bài viết nào...
+                </div>
+            </NotFoundTemplate>
+        </HxSearchBox>
+    </div>
+</div>
+
+@code {
+    private string? triggeredTextQuery;
+    private Type? selectedComponent;
+
+    private List<PostDto> matched = [];
+
+    private Task<SearchBoxDataProviderResult<PostDto>> ProvideSearchResults(SearchBoxDataProviderRequest request)
+    {
+        var query = request.UserInput?.Trim() ?? "";
+
+        matched = GeneratedPosts.All
+            .Where(p => p.Title.Contains(query, StringComparison.OrdinalIgnoreCase))
+            .Take(10)
+            .ToList();
+
+        StateHasChanged();
+
+        return Task.FromResult(new SearchBoxDataProviderResult<PostDto>
+        {
+            Data = matched
+        });
+    }
+
+    private void OnItemSelected(PostDto item)
+    {
+        NavigationManager.NavigateTo(item.Route);
+    }
+
+    private void OnTextQueryTriggered(string text)
+    {
+        NavigationManager.NavigateTo($"?Query={text}&Page=1");
+    }
+
+}

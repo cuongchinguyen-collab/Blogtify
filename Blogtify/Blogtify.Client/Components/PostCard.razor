@@ -1,0 +1,15 @@
+﻿
+
+<div class="post-card">
+    <HxCard CssClass="rounded-0">
+        <BodyTemplate>
+            <p>@Title</p>
+        </BodyTemplate>
+    </HxCard>
+</div>
+
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+}

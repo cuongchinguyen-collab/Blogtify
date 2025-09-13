@@ -1,0 +1,56 @@
+﻿@inherits LayoutComponentBase
+@layout MainLayout
+
+@inject IJSRuntime JSRuntime
+
+<HxCard>
+    <HeaderTemplate>
+        <h4>Nội dung</h4>
+    </HeaderTemplate>
+    <BodyTemplate>
+        @Body
+    </BodyTemplate>
+</HxCard>
+
+<HxCard CssClass="mt-2">
+    <HeaderTemplate>
+        <h4>Bình luận</h4>
+    </HeaderTemplate>
+    <BodyTemplate>
+        @if (_isLoading)
+        {
+            <div class="text-center p-3">
+                <HxSpinner Size="SpinnerSize.Regular" />
+            </div>
+        }
+        else
+        {
+            <div id="disqus_thread"></div>
+        }
+    </BodyTemplate>
+</HxCard>
+
+@code {
+    private IJSObjectReference? _module;
+
+    private bool _isLoading = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./Layout/BlogPostLayout.razor.js");
+            await _module.InvokeVoidAsync("addDisqusComments");
+
+            _isLoading = false;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_module is not null)
+        {
+            await _module.DisposeAsync();
+        }
+    }
+}

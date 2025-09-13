@@ -1,0 +1,24 @@
+﻿@inject NavigationManager NavigationManager
+
+<HxCard>
+    <BodyTemplate>
+        <footer>
+            <div class="container text-center">
+                <div class="mb-2">
+                    <HxButton OnClick="@(() => NavigationManager.NavigateTo("https://github.com/chicuong2k3"))"
+                              Color="ThemeColor.Light" Size="ButtonSize.Small" CssClass="rounded-circle">
+                        <HxIcon Icon="BootstrapIcon.Github" />
+                    </HxButton>
+                    <HxButton OnClick="@(() => NavigationManager.NavigateTo("https://www.facebook.com/2ci161"))"
+                              Color="ThemeColor.Info" Size="ButtonSize.Small" CssClass="rounded-circle">
+                        <HxIcon Icon="BootstrapIcon.Facebook" />
+                    </HxButton>
+                </div>
+
+                <div>
+                    <small class="text-muted">©2025 Chí Cường. All rights reserved.</small>
+                </div>
+            </div>
+        </footer>
+    </BodyTemplate>
+</HxCard>

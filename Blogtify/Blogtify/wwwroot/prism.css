@@ -1,0 +1,15 @@
+﻿
+pre {
+    border-radius: 8px;
+}
+
+
+code {
+    padding: 8px 0;
+}
+
+.copy-code-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}

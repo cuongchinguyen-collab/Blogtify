@@ -1,0 +1,71 @@
+﻿@page "/"
+
+@inject NavigationManager NavigationManager
+
+<HxCard>
+    <HeaderTemplate>
+        <h4>Các bài viết</h4>
+    </HeaderTemplate>
+    <BodyTemplate>
+        <div class="row">
+            @foreach (var post in _posts)
+            {
+                <div class="col-12 col-md-3 mt-4 p-1" @onclick="@(() => NavigationManager.NavigateTo(post.Route))">
+                    <PostCard Title="@post.Title" />
+                </div>
+            }
+        </div>
+
+        @if (_hasMore)
+        {
+            <div class="text-center mt-4">
+                <HxButton Color="ThemeColor.Primary" Spinner="@_isLoading" OnClick="LoadMore">
+                    Tải thêm
+                </HxButton>
+            </div>
+        }
+    </BodyTemplate>
+</HxCard>
+
+
+@code {
+    private List<PostDto> _posts = [];
+
+    [SupplyParameterFromQuery]
+    public string Query { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery]
+    public int Page { get; set; }
+
+    private int _totalPost;
+    private bool _isLoading = false;
+    private bool _hasMore = true;
+
+    protected override void OnInitialized()
+    {
+        _totalPost = GeneratedPosts.All
+                        .Where(p => p.Title.Contains(Query ?? string.Empty, StringComparison.OrdinalIgnoreCase))
+                        .Count();
+        LoadPosts();
+    }
+
+    private void LoadPosts()
+    {
+        _isLoading = true;
+
+        _posts.AddRange(GeneratedPosts.All
+            .Where(p => p.Title.Contains(Query ?? string.Empty, StringComparison.OrdinalIgnoreCase))
+            .Skip((Page - 1) * 8)
+            .Take(8)
+            .ToList());
+
+        _isLoading = false;
+        _hasMore = _posts.Count() < _totalPost;
+    }
+
+    private void LoadMore()
+    {
+        Page++;
+        LoadPosts();
+    }
+}
