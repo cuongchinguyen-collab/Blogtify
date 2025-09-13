@@ -25,7 +25,7 @@ jobs:
 
       - name: Publish project
         run: |
-          dotnet publish --configuration Release --no-restore --output ./publish --self-contained true --runtime win-x64 -p:PublishTrimmed=true
+          dotnet publish --configuration Release --no-restore --output ./publish -p:PublishTrimmed=true
         shell: pwsh
       
       - name: Deploy qua FTP
