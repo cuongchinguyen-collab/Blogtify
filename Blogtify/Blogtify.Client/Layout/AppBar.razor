@@ -36,11 +36,7 @@
     {
         var query = request.UserInput?.Trim() ?? "";
 
-        matched = GeneratedPosts.All
-            .Where(p => p.Title.Contains(query, StringComparison.OrdinalIgnoreCase))
-            .Take(10)
-            .ToList();
-
+        matched = AppDataManager.GetPosts(1, Constants.SearchPageSize, query, []);
         StateHasChanged();
 
         return Task.FromResult(new SearchBoxDataProviderResult<PostDto>

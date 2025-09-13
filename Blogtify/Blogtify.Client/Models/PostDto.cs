@@ -4,4 +4,5 @@ public class PostDto
 {
     public string Route { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
+    public List<string> Tags { get; set; } = [];
 }

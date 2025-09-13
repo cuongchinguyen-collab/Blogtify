@@ -2,13 +2,25 @@
 @layout MainLayout
 
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
 
 <HxCard>
     <HeaderTemplate>
         <h4>Nội dung</h4>
     </HeaderTemplate>
     <BodyTemplate>
-        @Body
+        @foreach (var tag in _tags)
+        {
+            <span class="me-1">
+                <HxBadge Color="ThemeColor.Info" Type="BadgeType.RoundedPill">
+                    <a class="text-white text-decoration-none" href="@($"?page=1&pageSize={Constants.PageSize}&tags={tag}")">@tag</a>
+                </HxBadge>
+            </span>
+        }
+
+        <div class="mt-4">
+            @Body
+        </div>
     </BodyTemplate>
 </HxCard>
 
@@ -27,15 +39,37 @@
     </BodyTemplate>
 </HxCard>
 
+<HxCard CssClass="mt-2">
+    <HeaderTemplate>
+        <h4>Bài viết tương tự</h4>
+    </HeaderTemplate>
+    <BodyTemplate>
+        <RelatedPosts />
+    </BodyTemplate>
+</HxCard>
+
 @code {
     private IJSObjectReference? _module;
 
-    private bool _isLoading = true;
+    private bool _isLoading = false;
+
+    private List<string> _tags = [];
+
+    protected override void OnInitialized()
+    {
+        var currentUrl = new Uri(NavigationManager.Uri).AbsolutePath;
+        var post = AppDataManager.GetPostByRoute(currentUrl);
+        if (post is not null)
+        {
+            _tags = post.Tags;
+        }
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            _isLoading = true;
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./Layout/BlogPostLayout.razor.js");
             await _module.InvokeVoidAsync("addDisqusComments");
 

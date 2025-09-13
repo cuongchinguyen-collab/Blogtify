@@ -1,6 +1,7 @@
 ---
 url: [/webhook123]
 title: "Tìm hiểu về Webhook và cách triển khai"
+$attribute: Tags("Blazor,C#")
 $layout: Blogtify.Client.Layout.BlogPostLayout
 ---
 

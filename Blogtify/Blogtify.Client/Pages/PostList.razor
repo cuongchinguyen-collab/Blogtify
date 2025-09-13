@@ -27,7 +27,6 @@
     </BodyTemplate>
 </HxCard>
 
-
 @code {
     private List<PostDto> _posts = [];
 
@@ -37,30 +36,29 @@
     [SupplyParameterFromQuery]
     public int Page { get; set; }
 
+    [SupplyParameterFromQuery(Name = "tags")]
+    public string[] Tags { get; set; } = [];
+
     private int _totalPost;
     private bool _isLoading = false;
     private bool _hasMore = true;
 
     protected override void OnInitialized()
     {
-        _totalPost = GeneratedPosts.All
-                        .Where(p => p.Title.Contains(Query ?? string.Empty, StringComparison.OrdinalIgnoreCase))
-                        .Count();
+        _totalPost = AppDataManager.GetTotalPosts(Query ?? string.Empty, Tags.ToList());
         LoadPosts();
+        Console.WriteLine($"Tags: {Tags}");
     }
 
     private void LoadPosts()
     {
         _isLoading = true;
 
-        _posts.AddRange(GeneratedPosts.All
-            .Where(p => p.Title.Contains(Query ?? string.Empty, StringComparison.OrdinalIgnoreCase))
-            .Skip((Page - 1) * 8)
-            .Take(8)
-            .ToList());
+        _posts.AddRange(AppDataManager.GetPosts(Page, Constants.PageSize, Query ?? string.Empty, Tags.ToList()));
 
         _isLoading = false;
-        _hasMore = _posts.Count() < _totalPost;
+        _hasMore = _posts.Count()
+    < _totalPost;
     }
 
     private void LoadMore()

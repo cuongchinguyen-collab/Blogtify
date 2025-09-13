@@ -5,6 +5,8 @@ namespace Blogtify.Client;
 
 public partial class CustomComponentBase : ComponentBase
 {
+    public List<string> Tags { get; set; } = [];
+
     [Inject]
     private IJSRuntime JSRuntime { get; set; } = default!;
 
