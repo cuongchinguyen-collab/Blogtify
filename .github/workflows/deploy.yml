@@ -1,4 +1,4 @@
-name: CI/CD to FTP
+name: CI/CD to FTP (MonsterASP Safe)
 
 on:
   push:
@@ -19,7 +19,6 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore
-
       - name: Build project
         run: dotnet build --configuration Release --no-restore
 
@@ -27,19 +26,30 @@ jobs:
         run: |
           dotnet publish --configuration Release --no-restore --output ./publish -p:PublishTrimmed=true
         shell: pwsh
-      
-      - name: Deploy qua FTP
+
+      - name: Deploy to temporary folder
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./publish/ 
-          server-dir: ${{ secrets.FTP_SERVER_DIR }}
-          protocol: ftps 
+          local-dir: ./publish/
+          server-dir: /temp_deploy
+          protocol: ftps
           exclude: |
             **/*.pdb
             **/logs/**
             **/.htaccess
             **/web.config
-          dangerous-clean-slate: true 
+          dangerous-clean-slate: true
+
+      - name: Swap folder to production
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ""
+          server-dir: /wwwroot/
+          protocol: ftps
+          dangerous-clean-slate: true
