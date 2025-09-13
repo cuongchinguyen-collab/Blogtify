@@ -28,15 +28,9 @@ jobs:
 
       - name: Publish project
         run: |
-          dotnet publish \
-            --configuration Release \
-            --no-restore \
-            --output ./publish \
-            --self-contained true \
-            --runtime win-x64 \
-            -p:PublishSingleFile=true \
-            -p:PublishTrimmed=true 
-
+          dotnet publish --configuration Release --no-restore --output ./publish --self-contained true --runtime win-x64 -p:PublishSingleFile=true -p:PublishTrimmed=true
+        shell: pwsh
+      
       - name: Deploy qua FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
