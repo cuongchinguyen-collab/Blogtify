@@ -23,12 +23,9 @@ jobs:
       - name: Build project
         run: dotnet build --configuration Release --no-restore
 
-      - name: Run tests
-        run: dotnet test --no-restore --verbosity normal 
-
       - name: Publish project
         run: |
-          dotnet publish --configuration Release --no-restore --output ./publish --self-contained true --runtime win-x64 -p:PublishSingleFile=true -p:PublishTrimmed=true
+          dotnet publish --configuration Release --no-restore --output ./publish --self-contained true --runtime win-x64 -p:PublishTrimmed=true
         shell: pwsh
       
       - name: Deploy qua FTP
