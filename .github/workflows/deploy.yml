@@ -30,7 +30,7 @@ jobs:
       - name: Deploy with MSDeploy
         shell: pwsh
         run: |
-          $publishUrl = "${{ secrets.PUBLISH_URL }}" 
+          $publishUrl = "site36496.siteasp.net" 
           $siteName   = "${{ secrets.SITE_NAME }}"
           $username   = "${{ secrets.USERNAME }}"
           $password   = "${{ secrets.PASSWORD }}"
