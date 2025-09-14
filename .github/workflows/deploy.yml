@@ -46,15 +46,14 @@ jobs:
             "-source:contentPath=`"$publishFolder`"",
             "-dest:auto,computerName=`"https://$publishUrl:8172/msdeploy.axd`",userName=`"$username`",password=`"$password`",authType=Basic,includeAcls=False,site=`"$siteName`"",
             "-verb:sync",
-            "-enableRule:DoNotDeleteRule",
-            "-setParam:name=`"IIS Web Application Name`",value=`"$siteName`""
+            "-enableRule:DoNotDeleteRule"
           )
 
           # Debug: Print arguments
           Write-Output "MSDeploy Arguments:"
           $arguments | ForEach-Object { Write-Output $_ }
 
-          # Execute MSDeploy with Start-Process to ensure proper argument handling
+          # Execute MSDeploy with Start-Process
           Start-Process -FilePath $msdeploy -ArgumentList $arguments -NoNewWindow -Wait -RedirectStandardOutput "msdeploy_output.txt" -RedirectStandardError "msdeploy_error.txt"
 
           # Output logs for debugging
