@@ -34,16 +34,18 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           $publishSettingsPath = ".github/workflows/symphonix.runasp.net-WebDeploy.publishSettings"
+
           $publishUrl = (Select-Xml "//publishUrl" -Path $publishSettingsPath).Node.InnerText
-          $siteName = (Select-Xml "//msdeploySite" -Path $publishSettingsPath).Node.InnerText
-          $username = (Select-Xml "//userName" -Path $publishSettingsPath).Node.InnerText
-          $password = $env:FTP_PASSWORD
+          $siteName   = (Select-Xml "//msdeploySite" -Path $publishSettingsPath).Node.InnerText
+          $username   = (Select-Xml "//userName" -Path $publishSettingsPath).Node.InnerText
+          $password   = $env:FTP_PASSWORD
+
+          $destArgs = "auto,computerName=$publishUrl,username=$username,password=$password,authType=Basic,includeAcls=False"
 
           & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
-            -source:package="publish.zip" `
-            -dest:auto,computerName=$publishUrl,username=$username,password=$password,authType="Basic",includeAcls="False" `
-            -verb:sync -enableRule:DoNotDeleteRule
-        env:
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+              -source:package="publish.zip" `
+              -dest:$destArgs `
+              -verb:sync `
+              -enableRule:DoNotDeleteRule
 
 
