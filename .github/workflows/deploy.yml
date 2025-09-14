@@ -38,6 +38,9 @@ jobs:
 
           echo "Deploying to $publishUrl, site=$siteName"
 
+          # Normalize path to avoid backslash issues
+          $publishFolder = $publishFolder -replace '\\', '/'
+
           $msdeploy = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
           $arguments = @(
             "-source:contentPath=`"$publishFolder`"",
@@ -47,4 +50,15 @@ jobs:
             "-setParam:name=`"IIS Web Application Name`",value=`"$siteName`""
           )
 
-          & $msdeploy $arguments
+          # Debug: Print arguments
+          Write-Output "MSDeploy Arguments:"
+          $arguments | ForEach-Object { Write-Output $_ }
+
+          # Execute MSDeploy with Start-Process to ensure proper argument handling
+          Start-Process -FilePath $msdeploy -ArgumentList $arguments -NoNewWindow -Wait -RedirectStandardOutput "msdeploy_output.txt" -RedirectStandardError "msdeploy_error.txt"
+
+          # Output logs for debugging
+          Write-Output "MSDeploy Output:"
+          Get-Content "msdeploy_output.txt"
+          Write-Output "MSDeploy Errors:"
+          Get-Content "msdeploy_error.txt"
