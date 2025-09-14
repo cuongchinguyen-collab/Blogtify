@@ -36,16 +36,14 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
           $publishSettingsPath = ".github/workflows/symphonix.runasp.net-WebDeploy.publishSettings"
+          [xml]$publishProfile = Get-Content $publishSettingsPath
+          $publishUrl = $publishProfile.publishData.publishProfile.publishUrl
+          $username   = $publishProfile.publishData.publishProfile.userName
+          $password   = $publishProfile.publishData.publishProfile.userPWD
+          $siteName   = $publishProfile.publishData.publishProfile.msdeploySite
       
-          $publishUrl = (Select-Xml "//publishProfile/@publishUrl" -Path $publishSettingsPath).Node.Value
-          $siteName   = (Select-Xml "//publishProfile/@msdeploySite" -Path $publishSettingsPath).Node.Value
-          $username   = (Select-Xml "//publishProfile/@userName" -Path $publishSettingsPath).Node.Value
-          $password   = $env:FTP_PASSWORD
-      
-          Write-Host "Publishing to $publishUrl, site=$siteName, user=$username"
-      
-          & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
-            -source:package="publish.zip" `
-            -dest:auto,computerName="$publishUrl",userName="$username",password="$password",authType=Basic,includeAcls=False,site="$siteName" `
-            -verb:sync -enableRule:DoNotDeleteRule
-
+          & "C:\Program Files (x86)\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
+            -verb:sync `
+            -source:contentPath="Blogtify/Blogtify/bin/Release/net8.0/publish" `
+            -dest:auto,computerName=$publishUrl,userName=$username,password=$password,authType=Basic,includeAcls=False,site=$siteName `
+            -allowUntrusted
