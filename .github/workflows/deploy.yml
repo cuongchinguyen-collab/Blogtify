@@ -40,7 +40,7 @@ jobs:
 
           & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
             -source:contentPath="$publishFolder" `
-            "-dest:auto,computerName=https://$publishUrl:8172/msdeploy.axd,userName=$username,password=$password,authType=Basic,includeAcls=False" `
+            -dest:auto,computerName="https://$publishUrl:8172/msdeploy.axd",userName=$username,password=$password,authType=Basic,includeAcls=False `
             -verb:sync `
             -enableRule:DoNotDeleteRule `
-            "-setParam:name=IIS Web Application Name,value=$siteName"
+            -setParam:name="IIS Web Application Name",value="$siteName"
