@@ -36,7 +36,8 @@ jobs:
 
       # Copy compat framework into server publish
       - name: Copy compat framework
-        run: xcopy /I /E /Y "./publishCompat/wwwroot/_framework" "./publish/wwwroot/_frameworkCompat"
+        run: xcopy ".\publishCompat\wwwroot\_framework" ".\publish\wwwroot\_frameworkCompat" /I /E /Y
+        shell: cmd
 
       - name: Deploy with MSDeploy
         shell: pwsh
