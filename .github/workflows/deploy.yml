@@ -30,12 +30,10 @@ jobs:
       - name: Deploy with MSDeploy
         shell: pwsh
         run: |
-          $username   = "${{ secrets.USERNAME }}"
           $password   = "${{ secrets.PASSWORD }}"
           $publishFolder = "${{ github.workspace }}\publish"
 
           # Validate secrets
-          if (-not $username -or $username -eq "") { throw "Error: USERNAME secret is not set, empty, or invalid" }
           if (-not $password -or $password -eq "") { throw "Error: PASSWORD secret is not set, empty, or invalid" }
 
           $publishFolder = $publishFolder -replace '\\', '/'
@@ -45,8 +43,8 @@ jobs:
             "-source:contentPath=`"$publishFolder`"",
             ("-dest:contentPath=`"site36496`"," +
              "computerName=`"https://site36496.siteasp.net:8172/msdeploy.axd?site=site36496`"," +
-             "userName=`"$username`"," +
-             "password=`"$password`"," +
+             "userName=`"site36496`"," +
+             "password=`"J-n32fQ+iF_6`"," +
              "authType=Basic," +
              "includeAcls=False"),
             "-verb:sync",
