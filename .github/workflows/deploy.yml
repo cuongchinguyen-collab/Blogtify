@@ -30,18 +30,15 @@ jobs:
       - name: Deploy
         shell: pwsh
         run: |
-          $publishSettingsPath = ".github/workflows/symphonix.runasp.net-WebDeploy.publishSettings"
-          [xml]$xml = Get-Content $publishSettingsPath
-          $profile   = $xml.publishData.publishProfile
-          $publishUrl = $profile.publishUrl
-          $siteName   = $profile.msdeploySite
-          $username   = $profile.userName
-          $password   = $profile.userPWD
+          $publishUrl = "${{ secrets.PUBLISH_URL }}"
+          $siteName   = "${{ secrets.SITE_NAME }}"
+          $username   = "${{ secrets.USERNAME }}"
+          $password   = "${{ secrets.PASSWORD }}"
 
           echo "Deploying to $publishUrl, site=$siteName"
 
           & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
-            -source:contentPath="D:\a\Blogtify\Blogtify/publish" `
+            -source:contentPath="publish" `
             -dest:auto,computerName="https://$publishUrl:8172/msdeploy.axd",userName=$username,password=$password,authType=Basic,includeAcls=False,site=$siteName `
             -verb:sync `
             -enableRule:DoNotDeleteRule
