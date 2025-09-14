@@ -55,11 +55,17 @@ jobs:
           $msdeploy = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
           $arguments = @(
             "-source:contentPath=`"$publishFolder`"",
-            "-dest:contentPath=`"$siteName`",computerName=`"https://$publishUrl:8172/msdeploy.axd`",userName=`"$username`",password=`"$password`",authType=Basic,includeAcls=False",
+            "-dest:contentPath=`"$siteName`",
+                    computerName=`"https://$publishUrl:8172/msdeploy.axd?site=$siteName`",
+                    userName=`"$username`",
+                    password=`"$password`",
+                    authType=Basic,
+                    includeAcls=False",
             "-verb:sync",
             "-enableRule:DoNotDeleteRule",
             "-verbose"
           )
+
 
           # Debug: Print arguments
           Write-Output "MSDeploy Arguments:"
