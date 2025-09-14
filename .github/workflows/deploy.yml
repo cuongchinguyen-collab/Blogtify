@@ -30,21 +30,26 @@ jobs:
       - name: Deploy with MSDeploy
         shell: pwsh
         run: |
-          $publishUrl = "site36496.siteasp.net"
+          $publishUrl = "${{ secrets.PUBLISH_URL }}" 
           $siteName   = "${{ secrets.SITE_NAME }}"
           $username   = "${{ secrets.USERNAME }}"
           $password   = "${{ secrets.PASSWORD }}"
           $publishFolder = "${{ github.workspace }}\publish"
 
+          # Debug: Print secret values (masked for security)
+          Write-Output "PUBLISH_URL from secrets: ${{ secrets.PUBLISH_URL }}"
+          Write-Output "SITE_NAME from secrets: ${{ secrets.SITE_NAME }}"
+          Write-Output "USERNAME from secrets: ${{ secrets.USERNAME }}"
+          Write-Output "PASSWORD from secrets: ${{ secrets.PASSWORD }}"
+
           # Validate secrets
-          if (-not $publishUrl -or $publishUrl -eq "***" -or $publishUrl -eq "") { throw "Error: PUBLISH_URL secret is not set, empty, or invalid" }
+          if (-not $publishUrl -or $publishUrl -eq "") { throw "Error: PUBLISH_URL secret is not set, empty, or invalid. Should be site36496.siteasp.net" }
           if (-not $siteName -or $siteName -eq "") { throw "Error: SITE_NAME secret is not set, empty, or invalid" }
           if (-not $username -or $username -eq "") { throw "Error: USERNAME secret is not set, empty, or invalid" }
           if (-not $password -or $password -eq "") { throw "Error: PASSWORD secret is not set, empty, or invalid" }
 
           echo "Deploying to $publishUrl, site=$siteName"
 
-          # Normalize path to avoid backslash issues
           $publishFolder = $publishFolder -replace '\\', '/'
 
           $msdeploy = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
