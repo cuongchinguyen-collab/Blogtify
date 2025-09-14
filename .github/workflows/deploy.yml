@@ -30,6 +30,8 @@ jobs:
         shell: pwsh
 
       - name: Deploy
+        shell: pwsh
+        working-directory: ${{ github.workspace }}
         run: |
           $publishSettingsPath = ".github/workflows/symphonix.runasp.net-WebDeploy.publishSettings"
           $publishUrl = (Select-Xml "//publishUrl" -Path $publishSettingsPath).Node.InnerText
@@ -41,6 +43,7 @@ jobs:
             -source:package="publish.zip" `
             -dest:auto,computerName=$publishUrl,username=$username,password=$password,authType="Basic",includeAcls="False" `
             -verb:sync -enableRule:DoNotDeleteRule
-        shell: pwsh
         env:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+
+
