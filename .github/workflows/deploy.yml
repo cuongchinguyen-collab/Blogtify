@@ -36,7 +36,7 @@ jobs:
           $siteName = (Select-Xml "//msdeploySite" -Path $publishSettingsPath).Node.InnerText
           $username = (Select-Xml "//userName" -Path $publishSettingsPath).Node.InnerText
           $password = $env:FTP_PASSWORD
-          
+
           & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
             -source:package="publish.zip" `
             -dest:auto,computerName=$publishUrl,username=$username,password=$password,authType="Basic",includeAcls="False" `
