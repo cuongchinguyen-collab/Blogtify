@@ -21,11 +21,11 @@ jobs:
         run: dotnet restore
 
       - name: Build project
-        run: dotnet build Blogtify/Blogtify.csproj --configuration Release --no-restore
+        run: dotnet build Blogtify/Blogtify/Blogtify.csproj --configuration Release --no-restore
 
       - name: Publish project
         run: |
-          dotnet publish Blogtify/Blogtify.csproj -c Release -o ./publish
+          dotnet publish Blogtify/Blogtify/Blogtify.csproj -c Release -o ./publish
           Compress-Archive -Path ./publish/* -DestinationPath ./publish.zip
         shell: pwsh
 
