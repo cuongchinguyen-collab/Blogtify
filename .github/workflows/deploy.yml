@@ -44,7 +44,7 @@ jobs:
             ("-dest:contentPath=`"site36496`"," +
              "computerName=`"https://site36496.siteasp.net:8172/msdeploy.axd?site=site36496`"," +
              "userName=`"site36496`"," +
-             "password=`"jF#4L%6hd2X=`"," +
+             "password=`"$password`"," +
              "authType=Basic," +
              "includeAcls=False"),
             "-verb:sync",
@@ -52,15 +52,5 @@ jobs:
             "-verbose"
           )
 
-          # Debug: Print arguments
-          Write-Output "MSDeploy Arguments:"
-          $arguments | ForEach-Object { Write-Output $_ }
-
           # Execute MSDeploy with Start-Process
-          Start-Process -FilePath $msdeploy -ArgumentList $arguments -NoNewWindow -Wait -RedirectStandardOutput "msdeploy_output.txt" -RedirectStandardError "msdeploy_error.txt"
-
-          # Output logs for debugging
-          Write-Output "MSDeploy Output:"
-          Get-Content "msdeploy_output.txt"
-          Write-Output "MSDeploy Errors:"
-          Get-Content "msdeploy_error.txt"
+          Start-Process -FilePath $msdeploy -ArgumentList $arguments -NoNewWindow -Wait
