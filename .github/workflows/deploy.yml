@@ -31,6 +31,7 @@ jobs:
 
       - name: Deploy
         run: |
+          Set-Location ${{ github.workspace }}
           $publishSettingsPath = ".github/workflows/symphonix.runasp.net-WebDeploy.publishSettings"
           $publishUrl = (Select-Xml "//publishUrl" -Path $publishSettingsPath).Node.InnerText
           $siteName = (Select-Xml "//msdeploySite" -Path $publishSettingsPath).Node.InnerText
