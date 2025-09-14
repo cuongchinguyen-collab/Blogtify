@@ -36,6 +36,12 @@ jobs:
           $password   = "${{ secrets.PASSWORD }}"
           $publishFolder = "${{ github.workspace }}\publish"
 
+          # Validate secrets
+          if (-not $publishUrl) { throw "Error: PUBLISH_URL secret is not set or empty" }
+          if (-not $siteName) { throw "Error: SITE_NAME secret is not set or empty" }
+          if (-not $username) { throw "Error: USERNAME secret is not set or empty" }
+          if (-not $password) { throw "Error: PASSWORD secret is not set or empty" }
+
           echo "Deploying to $publishUrl, site=$siteName"
 
           # Normalize path to avoid backslash issues
