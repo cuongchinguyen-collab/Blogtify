@@ -1,4 +1,4 @@
-name: CI/CD to FTP (MonsterASP Safe)
+name: CI/CD 
 
 on:
   push:
@@ -12,44 +12,35 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup .NET 8
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
       - name: Restore dependencies
         run: dotnet restore
+
       - name: Build project
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build Blogtify/Blogtify.csproj --configuration Release --no-restore
 
       - name: Publish project
         run: |
-          dotnet publish --configuration Release --no-restore --output ./publish -p:PublishTrimmed=true
+          dotnet publish Blogtify/Blogtify.csproj -c Release -o ./publish
+          Compress-Archive -Path ./publish/* -DestinationPath ./publish.zip
         shell: pwsh
 
-      - name: Deploy to temporary folder
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./publish/
-          server-dir: /temp_deploy/
-          protocol: ftps
-          exclude: |
-            **/*.pdb
-            **/logs/**
-            **/.htaccess
-            **/web.config
-          dangerous-clean-slate: true
-
-      - name: Swap folder to production
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ""
-          server-dir: /wwwroot/
-          protocol: ftps
-          dangerous-clean-slate: true
+      - name: Deploy
+        run: |
+          $publishSettingsPath = ".github/workflows/symphonix.runasp.net-WebDeploy.publishSettings"
+          $publishUrl = (Select-Xml "//publishUrl" -Path $publishSettingsPath).Node.InnerText
+          $siteName = (Select-Xml "//msdeploySite" -Path $publishSettingsPath).Node.InnerText
+          $username = (Select-Xml "//userName" -Path $publishSettingsPath).Node.InnerText
+          $password = $env:FTP_PASSWORD
+          
+          & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
+            -source:package="publish.zip" `
+            -dest:auto,computerName=$publishUrl,username=$username,password=$password,authType="Basic",includeAcls="False" `
+            -verb:sync -enableRule:DoNotDeleteRule
+        shell: pwsh
+        env:
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
