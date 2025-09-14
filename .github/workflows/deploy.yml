@@ -23,11 +23,11 @@ jobs:
       - name: Build project
         run: dotnet build Blogtify.sln --configuration Release --no-restore
 
-      - name: Publish
-        run: dotnet publish Blogtify/Blogtify/Blogtify.csproj -c Release -o ${{ github.workspace }}/publish
+      - name: Publish project
+        run: dotnet publish Blogtify/Blogtify/Blogtify.csproj -c Release -o ./publish
         shell: pwsh
 
-      - name: Deploy
+      - name: Deploy with MSDeploy
         shell: pwsh
         run: |
           $publishUrl = "${{ secrets.PUBLISH_URL }}"
@@ -38,7 +38,7 @@ jobs:
           echo "Deploying to $publishUrl, site=$siteName"
 
           & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
-            -source:contentPath="publish" `
-            -dest:auto,computerName="https://$publishUrl:8172/msdeploy.axd",userName=$username,password=$password,authType=Basic,includeAcls=False,site=$siteName `
-            -verb:sync `
-            -enableRule:DoNotDeleteRule
+            "-source:contentPath=publish" `
+            "-dest:auto,computerName=https://$publishUrl:8172/msdeploy.axd,userName=$username,password=$password,authType=Basic,includeAcls=False,site=$siteName" `
+            "-verb:sync" `
+            "-enableRule:DoNotDeleteRule"
