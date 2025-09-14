@@ -49,6 +49,7 @@ jobs:
              "includeAcls=False"),
             "-verb:sync",
             "-enableRule:DoNotDeleteRule",
+            "-enableRule:AppOffline",
             "-verbose"
           )
 
