@@ -37,10 +37,10 @@ jobs:
           $publishFolder = "${{ github.workspace }}\publish"
 
           # Validate secrets
-          if (-not $publishUrl) { throw "Error: PUBLISH_URL secret is not set or empty" }
-          if (-not $siteName) { throw "Error: SITE_NAME secret is not set or empty" }
-          if (-not $username) { throw "Error: USERNAME secret is not set or empty" }
-          if (-not $password) { throw "Error: PASSWORD secret is not set or empty" }
+          if (-not $publishUrl -or $publishUrl -eq "***") { throw "Error: PUBLISH_URL secret is not set, empty, or invalid" }
+          if (-not $siteName -or $siteName -eq "***") { throw "Error: SITE_NAME secret is not set, empty, or invalid" }
+          if (-not $username -or $username -eq "***") { throw "Error: USERNAME secret is not set, empty, or invalid" }
+          if (-not $password -or $password -eq "***") { throw "Error: PASSWORD secret is not set, empty, or invalid" }
 
           echo "Deploying to $publishUrl, site=$siteName"
 
@@ -52,7 +52,8 @@ jobs:
             "-source:contentPath=`"$publishFolder`"",
             "-dest:contentPath=`"$siteName`",computerName=`"https://$publishUrl:8172/msdeploy.axd`",userName=`"$username`",password=`"$password`",authType=Basic,includeAcls=False",
             "-verb:sync",
-            "-enableRule:DoNotDeleteRule"
+            "-enableRule:DoNotDeleteRule",
+            "-verbose"
           )
 
           # Debug: Print arguments
