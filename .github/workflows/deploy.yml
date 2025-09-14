@@ -46,5 +46,6 @@ jobs:
       
           & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
             -source:package="publish.zip" `
-            -dest:auto,computerName="$publishUrl",userName="$username",password="$password",authType="Basic",includeAcls="False",site="$siteName" `
+            -dest:auto,computerName="$publishUrl",userName="$username",password="$password",authType=Basic,includeAcls=False,site="$siteName" `
             -verb:sync -enableRule:DoNotDeleteRule
+
