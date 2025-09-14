@@ -36,24 +36,15 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
           $publishSettingsPath = ".github/workflows/symphonix.runasp.net-WebDeploy.publishSettings"
-          $publishUrl = (Select-Xml "//publishUrl" -Path $publishSettingsPath).Node.InnerText
-          $username = (Select-Xml "//userName" -Path $publishSettingsPath).Node.InnerText
-          $password = $env:FTP_PASSWORD
-          
-          # Build the destination arguments string
-          $destArgs = "contentPath='Default Web Site/symphonix.runasp.net',computerName='$publishUrl',userName='$username',password='$password',authType='Basic',includeAcls='False'"
-          
-          # Use Start-Process to properly handle the arguments
-          $process = Start-Process -FilePath "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
-            -ArgumentList @(
-              "-source:package=`"publish.zip`"",
-              "-dest:$destArgs",
-              "-verb:sync",
-              "-enableRule:DoNotDeleteRule"
-            ) `
-            -NoNewWindow -Wait -PassThru
-          
-          if ($process.ExitCode -ne 0) {
-            Write-Error "MSDeploy failed with exit code $($process.ExitCode)"
-            exit $process.ExitCode
-          }
+      
+          $publishUrl = (Select-Xml "//publishProfile/@publishUrl" -Path $publishSettingsPath).Node.Value
+          $siteName   = (Select-Xml "//publishProfile/@msdeploySite" -Path $publishSettingsPath).Node.Value
+          $username   = (Select-Xml "//publishProfile/@userName" -Path $publishSettingsPath).Node.Value
+          $password   = $env:FTP_PASSWORD
+      
+          Write-Host "Publishing to $publishUrl, site=$siteName, user=$username"
+      
+          & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
+            -source:package="publish.zip" `
+            -dest:auto,computerName="$publishUrl",userName="$username",password="$password",authType="Basic",includeAcls="False",site="$siteName" `
+            -verb:sync -enableRule:DoNotDeleteRule
