@@ -39,14 +39,11 @@ jobs:
           $username   = (Select-Xml "//userName" -Path $publishSettingsPath).Node.InnerText
           $password   = $env:FTP_PASSWORD
 
-          # Deploy trực tiếp vào virtual directory
-          $destArgs = "contentPath='symphonix.runasp.net',computerName=$publishUrl,username=$username,password=$password,authType=Basic,includeAcls=False"
+          # FIXED: Deploy vào virtual application under Default Web Site
+          $destArgs = "contentPath='Default Web Site/symphonix.runasp.net',computerName=$publishUrl,username=$username,password=$password,authType=Basic,includeAcls=False"
 
           & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
               -source:package="publish.zip" `
               -dest:$destArgs `
               -verb:sync `
               -enableRule:DoNotDeleteRule
-
-
-
