@@ -30,7 +30,7 @@ jobs:
       - name: Deploy with MSDeploy
         shell: pwsh
         run: |
-          $publishUrl = "${{ secrets.PUBLISH_URL }}"
+          $publishUrl = "site36496.siteasp.net"
           $siteName   = "${{ secrets.SITE_NAME }}"
           $username   = "${{ secrets.USERNAME }}"
           $password   = "${{ secrets.PASSWORD }}"
@@ -38,9 +38,9 @@ jobs:
 
           # Validate secrets
           if (-not $publishUrl -or $publishUrl -eq "***" -or $publishUrl -eq "") { throw "Error: PUBLISH_URL secret is not set, empty, or invalid" }
-          if (-not $siteName -or $siteName -eq "***" -or $siteName -eq "") { throw "Error: SITE_NAME secret is not set, empty, or invalid" }
-          if (-not $username -or $username -eq "***" -or $username -eq "") { throw "Error: USERNAME secret is not set, empty, or invalid" }
-          if (-not $password -or $password -eq "***" -or $password -eq "") { throw "Error: PASSWORD secret is not set, empty, or invalid" }
+          if (-not $siteName -or $siteName -eq "") { throw "Error: SITE_NAME secret is not set, empty, or invalid" }
+          if (-not $username -or $username -eq "") { throw "Error: USERNAME secret is not set, empty, or invalid" }
+          if (-not $password -or $password -eq "") { throw "Error: PASSWORD secret is not set, empty, or invalid" }
 
           echo "Deploying to $publishUrl, site=$siteName"
 
