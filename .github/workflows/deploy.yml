@@ -21,29 +21,28 @@ jobs:
         run: dotnet restore
 
       - name: Build project
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build Blogtify.sln --configuration Release --no-restore
 
-      - name: Publish project
+      - name: Publish
         run: |
-          dotnet publish -c Release -o ./publish
-          Compress-Archive -Path ./publish/* -DestinationPath ./publish.zip
+          run: dotnet publish Blogtify/Blogtify/Blogtify.csproj -c Release -o ${{ github.workspace }}/publish
         shell: pwsh
 
       - name: Deploy
         shell: pwsh
-        working-directory: ${{ github.workspace }}
-        env:
-          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
           $publishSettingsPath = ".github/workflows/symphonix.runasp.net-WebDeploy.publishSettings"
-          [xml]$publishProfile = Get-Content $publishSettingsPath
-          $publishUrl = $publishProfile.publishData.publishProfile.publishUrl
-          $username   = $publishProfile.publishData.publishProfile.userName
-          $password   = $publishProfile.publishData.publishProfile.userPWD
-          $siteName   = $publishProfile.publishData.publishProfile.msdeploySite
-      
-          & "C:\Program Files (x86)\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
+          [xml]$xml = Get-Content $publishSettingsPath
+          $profile   = $xml.publishData.publishProfile
+          $publishUrl = $profile.publishUrl
+          $siteName   = $profile.msdeploySite
+          $username   = $profile.userName
+          $password   = $profile.userPWD
+
+          echo "Deploying to $publishUrl, site=$siteName"
+
+          & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
             -verb:sync `
-            -source:contentPath="Blogtify/Blogtify/bin/Release/net8.0/publish" `
-            -dest:auto,computerName=$publishUrl,userName=$username,password=$password,authType=Basic,includeAcls=False,site=$siteName `
+            -source:contentPath="${{ github.workspace }}/publish" `
+            -dest:auto,computerName="https://$publishUrl:8172/msdeploy.axd",userName="$username",password="$password",authType="Basic",includeAcls="False",site="$siteName" `
             -allowUntrusted
