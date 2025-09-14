@@ -32,18 +32,22 @@ jobs:
       - name: Deploy
         shell: pwsh
         working-directory: ${{ github.workspace }}
+        env:
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
           $publishSettingsPath = ".github/workflows/symphonix.runasp.net-WebDeploy.publishSettings"
-
           $publishUrl = (Select-Xml "//publishUrl" -Path $publishSettingsPath).Node.InnerText
-          $username   = (Select-Xml "//userName" -Path $publishSettingsPath).Node.InnerText
-          $password   = $env:FTP_PASSWORD
-
-          # FIXED: Deploy vào virtual application under Default Web Site
-          $destArgs = "contentPath='Default Web Site/symphonix.runasp.net',computerName=$publishUrl,username=$username,password=$password,authType=Basic,includeAcls=False"
-
+          $username = (Select-Xml "//userName" -Path $publishSettingsPath).Node.InnerText
+          $password = $env:FTP_PASSWORD
+          
+          # FIXED: Pass arguments directly instead of constructing a single string
           & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
-              -source:package="publish.zip" `
-              -dest:$destArgs `
-              -verb:sync `
-              -enableRule:DoNotDeleteRule
+            -source:package="publish.zip" `
+            -dest:contentPath='Default Web Site/symphonix.runasp.net' `
+            -dest:computerName="$publishUrl" `
+            -dest:userName="$username" `
+            -dest:password="$password" `
+            -dest:authType='Basic' `
+            -dest:includeAcls='False' `
+            -verb:sync `
+            -enableRule:DoNotDeleteRule
