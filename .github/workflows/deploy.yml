@@ -24,8 +24,7 @@ jobs:
         run: dotnet build Blogtify.sln --configuration Release --no-restore
 
       - name: Publish
-        run: |
-          run: dotnet publish Blogtify/Blogtify/Blogtify.csproj -c Release -o ${{ github.workspace }}/publish
+        run: dotnet publish Blogtify/Blogtify/Blogtify.csproj -c Release -o ${{ github.workspace }}/publish
         shell: pwsh
 
       - name: Deploy
