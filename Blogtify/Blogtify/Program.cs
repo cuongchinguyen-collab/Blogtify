@@ -1,5 +1,6 @@
-using Blogtify.Components;
 using Blogtify.Client;
+using Blogtify.Components;
+using Microsoft.AspNetCore.StaticFiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +19,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseStaticFiles();
+// Enable the .dat file extension (required to serve icudt.dat from _frameworkCompat/
+var provider = new FileExtensionContentTypeProvider();
+provider.Mappings[".dat"] = "application/octet-stream";
+app.UseStaticFiles(new StaticFileOptions
+{
+    ContentTypeProvider = provider
+});
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()

@@ -24,8 +24,11 @@ jobs:
         run: dotnet build Blogtify.sln --configuration Release --no-restore
 
       - name: Publish project
-        run: dotnet publish Blogtify/Blogtify/Blogtify.csproj -c Release -o ./publish
-        shell: pwsh
+        run: |
+          # Normal build
+          dotnet publish Blogtify/Blogtify.Server/Blogtify.Server.csproj -c Release -o ./publish
+          dotnet publish Blogtify/Blogtify.Server/Blogtify.Server.csproj -c ReleaseCompat -o ./publishCompat --no-restore
+          xcopy /I /E /Y "./publishCompat/wwwroot/_framework" "./publish/wwwroot/_frameworkCompat"
 
       - name: Deploy with MSDeploy
         shell: pwsh

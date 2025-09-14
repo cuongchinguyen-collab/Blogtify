@@ -5,6 +5,7 @@
 		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<Configurations>Debug;Release;ReleaseCompat</Configurations>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -13,9 +14,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Update="wwwroot\prism.js">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
+		<Content Update="wwwroot\prism.js">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 </Project>
