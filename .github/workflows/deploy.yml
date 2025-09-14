@@ -25,9 +25,8 @@ jobs:
 
       - name: Publish project
         run: |
-          # Normal build
-          dotnet publish Blogtify/Blogtify.Server/Blogtify.Server.csproj -c Release -o ./publish
-          dotnet publish Blogtify/Blogtify.Server/Blogtify.Server.csproj -c ReleaseCompat -o ./publishCompat --no-restore
+          dotnet publish Blogtify/Blogtify/Blogtify.csproj -c Release -o ./publish
+          dotnet publish Blogtify/Blogtify/Blogtify.csproj -c ReleaseCompat -o ./publishCompat --no-restore
           xcopy /I /E /Y "./publishCompat/wwwroot/_framework" "./publish/wwwroot/_frameworkCompat"
 
       - name: Deploy with MSDeploy
