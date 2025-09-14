@@ -17,23 +17,26 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Install workloads
-        run: dotnet workload restore
-
-      - name: Install wasm-tools-net8
+      - name: Install wasm-tools
         run: dotnet workload install wasm-tools-net8
 
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build project
+      - name: Build solution
         run: dotnet build Blogtify.sln --configuration Release --no-restore
 
-      - name: Publish project
-        run: |
-          dotnet publish Blogtify/Blogtify/Blogtify.csproj -c Release -o ./publish
-          dotnet publish Blogtify/Blogtify/Blogtify.csproj -c ReleaseCompat -o ./publishCompat --no-restore
-          xcopy /I /E /Y "./publishCompat/wwwroot/_framework" "./publish/wwwroot/_frameworkCompat"
+      # Publish server + client (Release)
+      - name: Publish Server (with default client build)
+        run: dotnet publish Blogtify/Blogtify/Blogtify.csproj -c Release -o ./publish
+
+      # Publish client fallback (ReleaseCompat)
+      - name: Publish Client ReleaseCompat
+        run: dotnet publish Blogtify/Blogtify.Client/Blogtify.Client.csproj -c ReleaseCompat -o ./publishCompat --no-restore
+
+      # Copy compat framework into server publish
+      - name: Copy compat framework
+        run: xcopy /I /E /Y "./publishCompat/wwwroot/_framework" "./publish/wwwroot/_frameworkCompat"
 
       - name: Deploy with MSDeploy
         shell: pwsh
@@ -41,7 +44,6 @@ jobs:
           $password   = "${{ secrets.PASSWORD }}"
           $publishFolder = "${{ github.workspace }}\publish"
 
-          # Validate secrets
           if (-not $password -or $password -eq "") { throw "Error: PASSWORD secret is not set, empty, or invalid" }
 
           $publishFolder = $publishFolder -replace '\\', '/'
@@ -61,5 +63,4 @@ jobs:
             "-verbose"
           )
 
-          # Execute MSDeploy with Start-Process
           Start-Process -FilePath $msdeploy -ArgumentList $arguments -NoNewWindow -Wait

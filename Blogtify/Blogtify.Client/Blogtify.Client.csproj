@@ -8,7 +8,6 @@
 		<NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
 		<StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
 		<MD2RazorDefaultBaseClass>Blogtify.Client.CustomComponentBase</MD2RazorDefaultBaseClass>
-		<CompressionEnabled>false</CompressionEnabled>
 		<Configurations>Debug;Release;ReleaseCompat</Configurations>
 	</PropertyGroup>
 
