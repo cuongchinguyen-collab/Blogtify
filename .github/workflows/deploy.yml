@@ -40,14 +40,20 @@ jobs:
           $username = (Select-Xml "//userName" -Path $publishSettingsPath).Node.InnerText
           $password = $env:FTP_PASSWORD
           
-          # FIXED: Pass arguments directly instead of constructing a single string
-          & "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
-            -source:package="publish.zip" `
-            -dest:contentPath='Default Web Site/symphonix.runasp.net' `
-            -dest:computerName="$publishUrl" `
-            -dest:userName="$username" `
-            -dest:password="$password" `
-            -dest:authType='Basic' `
-            -dest:includeAcls='False' `
-            -verb:sync `
-            -enableRule:DoNotDeleteRule
+          # Build the destination arguments string
+          $destArgs = "contentPath='Default Web Site/symphonix.runasp.net',computerName='$publishUrl',userName='$username',password='$password',authType='Basic',includeAcls='False'"
+          
+          # Use Start-Process to properly handle the arguments
+          $process = Start-Process -FilePath "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe" `
+            -ArgumentList @(
+              "-source:package=`"publish.zip`"",
+              "-dest:$destArgs",
+              "-verb:sync",
+              "-enableRule:DoNotDeleteRule"
+            ) `
+            -NoNewWindow -Wait -PassThru
+          
+          if ($process.ExitCode -ne 0) {
+            Write-Error "MSDeploy failed with exit code $($process.ExitCode)"
+            exit $process.ExitCode
+          }
