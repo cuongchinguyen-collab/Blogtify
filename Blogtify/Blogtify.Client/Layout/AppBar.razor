@@ -1,10 +1,13 @@
 ﻿@using Blogtify.Client.Models
 @using System.Reflection
+@using Blogtify.Client.Theming
 
 @inject NavigationManager NavigationManager
 
+@inject IThemeProvider ThemeProvider
+
 <div class="row align-items-center">
-    <div class="col-5 col-md-7">
+    <div class="col-3 col-md-5">
         <a href="/">
             <img src="logo.png" alt="SymphoniX" style="width: 80px" />
         </a>
@@ -27,10 +30,26 @@
             </NotFoundTemplate>
         </HxSearchBox>
     </div>
+
+    <div class="col-3 col-md-2">
+        <HxSelect Data="@Enum.GetNames(typeof(Theme))" ValueExpression="() => selectedTheme"
+                  Nullable="false" AutoSort="true"
+                  Value="@selectedTheme" ValueChanged="@((string theme) => ChangeTheme(theme))">
+        </HxSelect>
+    </div>
+
 </div>
 
 @code {
+    private string selectedTheme = "Yeti";
+
     private List<PostDto> matched = [];
+
+    protected override void OnInitialized()
+    {
+        selectedTheme = ThemeProvider.GetTheme().ToString();
+        ChangeTheme(selectedTheme);
+    }
 
     private Task<SearchBoxDataProviderResult<PostDto>> ProvideSearchResults(SearchBoxDataProviderRequest request)
     {
@@ -52,7 +71,15 @@
 
     private void OnTextQueryTriggered(string text)
     {
-        NavigationManager.NavigateTo($"?Query={text}&Page=1");
+        NavigationManager.NavigateTo($"?Query={text}&Page=1", forceLoad: true);
+    }
+
+    private void ChangeTheme(string theme)
+    {
+        selectedTheme = theme;
+
+        var themeEnum = Enum.Parse<Theme>(theme);
+        ThemeProvider.SetTheme(themeEnum);
     }
 
 }

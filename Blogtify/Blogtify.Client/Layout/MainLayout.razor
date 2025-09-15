@@ -1,18 +1,45 @@
 ﻿@inherits LayoutComponentBase
 
+@inject NavigationManager NavigationManager
 
 <div class="container-fluid">
 
     <div class="position-fixed top-0 start-0 w-100 align-items-center py-1"
          style="z-index: 100; background: rgba(250,250,250,0.3)">
-        <div class="px-2">
+        <div class="px-1">
             <AppBar />
         </div>
     </div>
-    <div class="pt-5 px-2">
-        <div class="pt-4">
-            @Body
+    <div class="pt-5 px-0">
+
+        <div class="row pt-4 mt-4 mx-2">
+            <div class="col-lg-3 p-0">
+                <HxTreeView TItem="Directory"
+                            SelectedItem="@selectedDirectory"
+                            Items="@directories" SelectedItemChanged="OnSelectedItemChanged"
+                            CssClass="border rounded p-2"
+                            ItemCssClass="fst-italic p-1"
+                            ItemInitialExpandedSelector="@(p => p.Name == "Thể loại")"
+                            ItemChildrenSelector="@(p => p.Subdirectories)"
+                            ItemIconSelector="@(p => p.Icon)">
+                    <ItemTemplate>
+                        <div class="fs-6">
+                            @context.Name
+                        </div>
+                        @if (context.Subdirectories?.Any() ?? false)
+                        {
+                            <HxBadge CssClass="mx-2" TextColor="ThemeColor.Light" Color="ThemeColor.Primary">
+                                @context.Subdirectories?.Length
+                            </HxBadge>
+                        }
+                    </ItemTemplate>
+                </HxTreeView>
+            </div>
+            <div class="col-lg-9 ps-1">
+                @Body
+            </div>
         </div>
+
         <div class="my-2">
             <Footer />
         </div>
@@ -21,3 +48,87 @@
     <BackToTopButton />
 </div>
 
+@code {
+    private Directory? selectedDirectory = null;
+    private Directory[] directories = [];
+
+    protected override void OnInitialized()
+    {
+        var categories = AppDataManager.AllCategories
+                                       .Where(c => c.Parent == null);
+
+        var root = new Directory("Thể loại", BootstrapIcon.Hdd);
+
+        if (categories != null && categories.Any())
+        {
+            var topChildren = categories
+                .Select(c => new Directory(c.Name, BootstrapIcon.Hdd))
+                .ToArray();
+
+            root.Subdirectories = topChildren;
+
+            foreach (var (cat, dir) in categories.Zip(topChildren, (sc, cd) => (sc, cd)))
+            {
+                AddSubCategories(cat, dir);
+            }
+        }
+
+        directories = [root];
+    }
+
+    private void AddSubCategories(CategoryDto category, Directory directory)
+    {
+        var subCategories = category.GetSubCategories();
+
+        if (subCategories == null || !subCategories.Any())
+        {
+            return;
+        }
+
+        var children = subCategories
+            .Select(c => new Directory(c.Name, c.GetSubCategories().Any() ? BootstrapIcon.Hdd : BootstrapIcon.FileEarmark))
+            .ToList();
+
+        directory.Subdirectories = children.ToArray();
+
+        foreach (var (subCategory, childDir) in subCategories.Zip(children, (sc, cd) => (sc, cd)))
+        {
+            AddSubCategories(subCategory, childDir);
+        }
+    }
+
+
+    private void OnSelectedItemChanged(Directory directory)
+    {
+
+        if (directory.Name == "Thể loại")
+        {
+            return;
+        }
+        else if (AppDataManager.AllCategories.Select(c => c.Name).Contains(directory.Name))
+        {
+            selectedDirectory = directory;
+            NavigationManager.NavigateTo($"?categories={directory.Name}");
+        }
+
+    }
+
+    public class Directory
+    {
+        public Directory(string name, IconBase? icon = null, string? hint = null)
+        {
+            Name = name;
+            Icon = icon;
+            Hint = hint;
+        }
+
+        public string Name { get; } = string.Empty;
+
+        public IconBase? Icon { get; set; }
+
+        public string? Hint { get; set; }
+
+        public Directory[] Subdirectories { get; set; } = [];
+    }
+
+}

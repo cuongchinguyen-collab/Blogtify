@@ -10,8 +10,8 @@
         <div class="row">
             @foreach (var post in _posts)
             {
-                <div class="col-12 col-md-3 mt-4 p-1" @onclick="@(() => NavigationManager.NavigateTo(post.Route))">
-                    <PostCard Title="@post.Title" />
+                <div class="col-12 col-md-3 mt-3 px-1" @onclick="@(() => NavigationManager.NavigateTo(post.Route))">
+                    <PostCard Post="@post" />
                 </div>
             }
         </div>
@@ -36,8 +36,8 @@
     [SupplyParameterFromQuery]
     public int Page { get; set; }
 
-    [SupplyParameterFromQuery(Name = "tags")]
-    public string[] Tags { get; set; } = [];
+    [SupplyParameterFromQuery(Name = "categories")]
+    public string[] Categories { get; set; } = [];
 
     private int _totalPost;
     private bool _isLoading = false;
@@ -45,16 +45,15 @@
 
     protected override void OnInitialized()
     {
-        _totalPost = AppDataManager.GetTotalPosts(Query ?? string.Empty, Tags.ToList());
+        _totalPost = AppDataManager.GetTotalPosts(Query ?? string.Empty, Categories.ToList());
         LoadPosts();
-        Console.WriteLine($"Tags: {Tags}");
     }
 
     private void LoadPosts()
     {
         _isLoading = true;
 
-        _posts.AddRange(AppDataManager.GetPosts(Page, Constants.PageSize, Query ?? string.Empty, Tags.ToList()));
+        _posts.AddRange(AppDataManager.GetPosts(Page, Constants.PageSize, Query ?? string.Empty, Categories.ToList()));
 
         _isLoading = false;
         _hasMore = _posts.Count()

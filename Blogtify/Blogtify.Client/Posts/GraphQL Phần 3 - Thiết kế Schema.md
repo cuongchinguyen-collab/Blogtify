@@ -1,6 +1,7 @@
 ---
 url: [/graphql3]
 title: GraphQL Phần 3 - Thiết kế Schema
+$attribute: Category("graphql", "web")
 $layout: Blogtify.Client.Layout.BlogPostLayout
 ---
 

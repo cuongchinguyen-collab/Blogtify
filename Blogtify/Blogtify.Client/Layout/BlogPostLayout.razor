@@ -5,28 +5,35 @@
 @inject NavigationManager NavigationManager
 
 <HxCard>
-    <HeaderTemplate>
-        <h4>Nội dung</h4>
-    </HeaderTemplate>
     <BodyTemplate>
-        @foreach (var tag in _tags)
+        @if (_currentPost is not null)
         {
-            <span class="me-1">
-                <HxBadge Color="ThemeColor.Info" Type="BadgeType.RoundedPill">
-                    <a class="text-white text-decoration-none" href="@($"?page=1&pageSize={Constants.PageSize}&tags={tag}")">@tag</a>
-                </HxBadge>
-            </span>
-        }
+            <div class="d-flex flex-row justify-content-between align-items-center">
+                <div></div>
+                <h1 class="text-center m-0 bg-primary text-white p-2">@_currentPost.Title</h1>
 
-        <div class="mt-4">
-            @Body
-        </div>
+                @if (_currentPost.Category != null)
+                {
+                    <span class="me-1">
+                        <HxBadge Color="ThemeColor.Info" Type="BadgeType.RoundedPill">
+                            <a class="text-white text-decoration-none fs-6" href="@($"?page=1&pageSize={Constants.PageSize}&categories={_currentPost.Category.Name}")">
+                                @_currentPost.Category.Name
+                            </a>
+                        </HxBadge>
+                    </span>
+                }
+            </div>
+
+            <div class="mt-4">
+                @Body
+            </div>
+        }
     </BodyTemplate>
 </HxCard>
 
 <HxCard CssClass="mt-2">
     <HeaderTemplate>
-        <h4>Bình luận</h4>
+        <p class="h1 lead">Bình luận</p>
     </HeaderTemplate>
     <BodyTemplate>
         @if (_isLoading)
@@ -41,7 +48,7 @@
 
 <HxCard CssClass="mt-2">
     <HeaderTemplate>
-        <h4>Bài viết tương tự</h4>
+        <p class="h1 lead">Bài viết tương tự</p>
     </HeaderTemplate>
     <BodyTemplate>
         <RelatedPosts />
@@ -53,16 +60,12 @@
 
     private bool _isLoading = false;
 
-    private List<string> _tags = [];
+    private PostDto? _currentPost = null;
 
     protected override void OnInitialized()
     {
         var currentUrl = new Uri(NavigationManager.Uri).AbsolutePath;
-        var post = AppDataManager.GetPostByRoute(currentUrl);
-        if (post is not null)
-        {
-            _tags = post.Tags;
-        }
+        _currentPost = AppDataManager.GetPostByRoute(currentUrl);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

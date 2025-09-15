@@ -1,0 +1,23 @@
+
+
+.social-btn-wrapper ::deep .social-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 20px;
+}
+
+    .social-btn-wrapper ::deep .social-btn:hover {
+        opacity: 0.8;
+        text-decoration: none;
+    }
+
+.social-btn-wrapper ::deep .fb-btn {
+    background-color: #3b5998;
+    color: white;
+}
+
+.social-btn-wrapper ::deep .github-btn {
+    background-color: #333;
+    color: white;
+}

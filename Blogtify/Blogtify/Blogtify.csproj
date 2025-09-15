@@ -14,7 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Update="wwwroot\prism.js">
+		<Content Update="wwwroot\js\prism.js">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>

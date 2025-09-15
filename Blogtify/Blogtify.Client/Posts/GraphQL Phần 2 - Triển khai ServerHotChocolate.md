@@ -1,6 +1,7 @@
 ---
 url: [/graphql-214342423332]
 title: GraphQL Phần 2 - Triển khai Server với HotChocolate
+$attribute: Category("ios 14", "ios")
 $layout: Blogtify.Client.Layout.BlogPostLayout
 ---
 

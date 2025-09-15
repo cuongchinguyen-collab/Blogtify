@@ -1,6 +1,7 @@
 ---
 url: [/graphql37678788]
 title: GraphQL Phần 3 - Thiết kế Schema
+$attribute: Category("ios", "mobile")
 $layout: Blogtify.Client.Layout.BlogPostLayout
 ---
 

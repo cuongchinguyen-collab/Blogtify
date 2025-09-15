@@ -1,6 +1,7 @@
 ---
 url: [/graphql-334]
 title: GraphQL Phần 3 - Security
+$attribute: Category("ios 17", "ios")
 $layout: Blogtify.Client.Layout.BlogPostLayout
 ---
 

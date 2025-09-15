@@ -1,6 +1,9 @@
 using Blogtify.Client;
+using Blogtify.Client.Theming;
 using Blogtify.Components;
+using Blogtify.Theming;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +12,9 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddCommonServices();
+
+builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddSingleton<IHttpContextProxy, ServerHttpContextProxy>();
 
 var app = builder.Build();
 

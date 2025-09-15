@@ -2,10 +2,10 @@
 
 .post-card ::deep .card {
     height: 100px;
-    transition: transform 0.4s ease;
+    transition: box-shadow 0.4s ease;
 }
 
     .post-card ::deep .card:hover {
-        transform: translateY(-8px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         cursor: pointer;
     }
