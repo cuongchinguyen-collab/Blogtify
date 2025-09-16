@@ -9,16 +9,17 @@
     <link rel="stylesheet" href="Blogtify.styles.css" />
     <link rel="stylesheet" href="css/prism.min.css" />
     <link rel="stylesheet" href="css/prism-coy-without-shadows.min.css" />
-    <link rel="stylesheet" href="css/prism-line-highlight.min.css" />
     <link rel="stylesheet" href="css/prism-line-numbers.min.css" />
     <link rel="stylesheet" href="css/code-block.css" />
     <link href="_content/Havit.Blazor.Components.Web.Bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link id="theme-stylesheet" rel="stylesheet" href="css/theme-yeti.css" />
     <link rel="stylesheet" href="css/app.css" />
     <HeadOutlet @rendermode="InteractiveWebAssembly" />
+
+    <script src="js/theme.js"></script>
 </head>
 
-<body>
+<body class="line-numbers">
     <Routes @rendermode="InteractiveWebAssembly" />
     <script src="_framework/blazor.web.js" autostart="false"></script>
     <script webworker-enabled src="js/wasm-feature-detect.1.5.1.js"></script>
@@ -77,12 +78,12 @@
         })();
     </script>
 
+    @((MarkupString)@HxSetup.RenderBootstrapJavaScriptReference())
 
-    <script src="js/theme.js"></script>
+    <script src="js/code-block.js"></script>
 
     <script src="js/prism-core.min.js"></script>
     <script src="js/prism-autoloader.min.js"></script>
-    <script src="js/prism.js"></script>
     <script src="js/prism-clike.min.js"></script>
     <script src="js/prism-csharp.min.js"></script>
     <script src="js/prism-yaml.min.js"></script>
@@ -93,9 +94,7 @@
     <script src="js/prism-powershell.min.js"></script>
     <script src="js/prism-python.min.js"></script>
     <script src="js/prism-sql.min.js"></script>
-    <script src="js/prism-line-highlight.min.js"></script>
     <script src="js/prism-line-numbers.min.js"></script>
-    @((MarkupString)@HxSetup.RenderBootstrapJavaScriptReference())
 </body>
 
 </html>

@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Blogtify.Client.Models;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using System.Reflection;
 
-namespace Blogtify.Client.Models;
+namespace Blogtify.Client.Services;
 
 public static class AppDataManager
 {
@@ -11,7 +13,7 @@ public static class AppDataManager
     {
         return GetAllPosts()
             .Where(p => p.Title.Contains(query, StringComparison.OrdinalIgnoreCase))
-            .Where(p => categories.Count == 0 || (categories.Any(c => p.Category != null && p.Category.Name.ToLower() == c.ToLower())))
+            .Where(p => categories.Count == 0 || categories.Any(c => p.Category != null && p.Category.Name.ToLower() == c.ToLower()))
             .Count();
     }
 
@@ -19,7 +21,7 @@ public static class AppDataManager
     {
         return GetAllPosts()
                 .Where(p => p.Title.Contains(query, StringComparison.OrdinalIgnoreCase))
-                .Where(p => categories.Count == 0 || (categories.Any(c => p.Category != null && p.Category.Name.ToLower() == c.ToLower())))
+                .Where(p => categories.Count == 0 || categories.Any(c => p.Category != null && p.Category.Name.ToLower() == c.ToLower()))
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();

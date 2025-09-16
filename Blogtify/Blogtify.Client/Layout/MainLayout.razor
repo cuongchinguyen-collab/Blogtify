@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
 <div class="container-fluid">
 
@@ -34,6 +35,7 @@
                         }
                     </ItemTemplate>
                 </HxTreeView>
+
             </div>
             <div class="col-lg-9 ps-1">
                 @Body

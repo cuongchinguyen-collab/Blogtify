@@ -8,24 +8,30 @@
     <BodyTemplate>
         @if (_currentPost is not null)
         {
-            <div class="d-flex flex-row justify-content-between align-items-center">
+            <div class="d-md-flex flex-row justify-content-between align-items-center">
                 <div></div>
                 <h1 class="text-center m-0 bg-primary text-white p-2">@_currentPost.Title</h1>
+                <div class="me-1 mt-2 mt-md-0">
+                    @if (_currentPost.Category != null)
+                    {
 
-                @if (_currentPost.Category != null)
-                {
-                    <span class="me-1">
                         <HxBadge Color="ThemeColor.Info" Type="BadgeType.RoundedPill">
                             <a class="text-white text-decoration-none fs-6" href="@($"?page=1&pageSize={Constants.PageSize}&categories={_currentPost.Category.Name}")">
                                 @_currentPost.Category.Name
                             </a>
                         </HxBadge>
-                    </span>
-                }
+                    }
+                </div>
             </div>
 
             <div class="mt-4">
-                @Body
+                <HxScrollspy TargetId="toc-content">
+                    <span id="content">@Body</span>
+                </HxScrollspy>
+
+                <div class="toc">
+                    <Toc Headings="@_headings" />
+                </div>
             </div>
         }
     </BodyTemplate>
@@ -58,6 +64,8 @@
 @code {
     private IJSObjectReference? _module;
 
+    private List<Heading> _headings = [];
+
     private bool _isLoading = false;
 
     private PostDto? _currentPost = null;
@@ -73,10 +81,13 @@
         if (firstRender)
         {
             _isLoading = true;
-            _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./Layout/BlogPostLayout.razor.js");
-            await _module.InvokeVoidAsync("addDisqusComments");
+            _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "/Layout/BlogPostLayout.razor.js");
+            //await _module.InvokeVoidAsync("addDisqusComments");
 
             _isLoading = false;
+
+            _headings = await _module.InvokeAsync<List<Heading>>("extractHeadings", "content");
+            StateHasChanged();
         }
     }
 

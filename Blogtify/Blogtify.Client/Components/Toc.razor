@@ -1,0 +1,29 @@
+﻿@using Blogtify.Client.Services
+
+
+
+@if (Headings.Any())
+{
+    <HxNav Id="@TargetId" Variant="NavVariant.Pills" Orientation="NavOrientation.Vertical">
+        @foreach (var heading in Headings.Where(h => h.Level == 1))
+        {
+            <HxScrollspyNavLink Href="@($"#{heading.Anchor}")">
+                @heading.Name
+            </HxScrollspyNavLink>
+        }
+    </HxNav>
+}
+
+
+
+@code {
+    [Parameter, EditorRequired]
+    public List<Heading> Headings { get; set; } = [];
+
+    [Parameter]
+    public string Content { get; set; } = string.Empty;
+
+    [Parameter]
+    public string TargetId { get; set; } = "toc-content";
+
+}

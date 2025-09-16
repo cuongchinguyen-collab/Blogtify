@@ -1,7 +1,6 @@
 using Blogtify.Client;
 using Blogtify.Client.Theming;
 using Blogtify.Components;
-using Blogtify.Theming;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -16,6 +15,17 @@ builder.Services.AddCommonServices();
 builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<IHttpContextProxy, ServerHttpContextProxy>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+builder.Services.AddControllers();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -24,6 +34,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 
 // Enable the .dat file extension (required to serve icudt.dat from _frameworkCompat/
 var provider = new FileExtensionContentTypeProvider();
@@ -38,4 +49,5 @@ app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Blogtify.Client._Imports).Assembly);
 
+app.MapControllers();
 app.Run();

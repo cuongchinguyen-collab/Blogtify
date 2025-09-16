@@ -45,10 +45,15 @@
 
     private List<PostDto> matched = [];
 
-    protected override void OnInitialized()
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        selectedTheme = ThemeProvider.GetTheme().ToString();
-        ChangeTheme(selectedTheme);
+        if (firstRender)
+        {
+
+            selectedTheme = (await ThemeProvider.GetThemeAsync()).ToString();
+            await ChangeTheme(selectedTheme);
+        }
     }
 
     private Task<SearchBoxDataProviderResult<PostDto>> ProvideSearchResults(SearchBoxDataProviderRequest request)
@@ -74,12 +79,12 @@
         NavigationManager.NavigateTo($"?Query={text}&Page=1", forceLoad: true);
     }
 
-    private void ChangeTheme(string theme)
+    private async Task ChangeTheme(string theme)
     {
         selectedTheme = theme;
 
         var themeEnum = Enum.Parse<Theme>(theme);
-        ThemeProvider.SetTheme(themeEnum);
+        await ThemeProvider.SetThemeAsync(themeEnum);
     }
 
 }

@@ -1,5 +1,4 @@
-﻿using Havit.Blazor.Components.Web.Bootstrap;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 namespace Blogtify.Client.Theming;
@@ -23,30 +22,32 @@ public class ThemeProvider : IDisposable, IThemeProvider
         _persistingComponentStateSubscription = _persistentComponentState.RegisterOnPersisting(PersistTheme);
     }
 
-    public event ThemeChangedHandler ThemeChanged;
+    public event ThemeChangedHandler? ThemeChanged;
 
-    public void SetTheme(Theme theme)
+    public async Task SetThemeAsync(Theme theme)
     {
         _theme = theme;
         ThemeChanged?.Invoke(theme);
 
-        _ = _jsRuntime.InvokeVoidAsync("themeSwitcher.setTheme", theme.ToString());
+        await _httpContextProxy.SetValueAsync("Theme", theme.ToString());
+
+        await _jsRuntime.InvokeVoidAsync("themeSwitcher.setTheme", theme.ToString());
     }
 
-    public Theme GetTheme()
+    public async Task<Theme> GetThemeAsync()
     {
-        if (_theme == null)
+        if (_theme is null)
         {
-            ResolveInitialTheme();
+            await ResolveInitialTheme();
         }
-        return _theme.Value;
+
+        return _theme!.Value;
     }
 
-    private void ResolveInitialTheme()
+    private async Task ResolveInitialTheme()
     {
-        // prerendering
         if (_httpContextProxy.IsSupported()
-            && _httpContextProxy.GetCookieValue("Theme") is string cookie
+            && await _httpContextProxy.GetValueAsync("Theme") is string cookie
             && Enum.TryParse<Theme>(cookie, ignoreCase: true, out var theme))
         {
             _theme = theme;
@@ -61,13 +62,12 @@ public class ThemeProvider : IDisposable, IThemeProvider
         }
     }
 
-    private Task PersistTheme()
+    private async Task PersistTheme()
     {
-        _persistentComponentState.PersistAsJson("Theme", GetTheme());
-        return Task.CompletedTask;
+        _persistentComponentState.PersistAsJson("Theme", await GetThemeAsync());
     }
 
-    void IDisposable.Dispose()
+    public void Dispose()
     {
         _persistingComponentStateSubscription.Dispose();
     }

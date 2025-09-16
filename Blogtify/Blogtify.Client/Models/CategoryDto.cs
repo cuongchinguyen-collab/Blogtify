@@ -1,4 +1,6 @@
-﻿namespace Blogtify.Client.Models;
+﻿using Blogtify.Client.Services;
+
+namespace Blogtify.Client.Models;
 
 public class CategoryDto
 {

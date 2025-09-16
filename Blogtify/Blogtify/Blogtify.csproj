@@ -14,9 +14,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Update="wwwroot\js\prism.js">
+		<Content Update="wwwroot\js\code-block.js">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Controllers\" />
 	</ItemGroup>
 
 </Project>
