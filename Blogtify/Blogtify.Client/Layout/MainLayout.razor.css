@@ -1,5 +1,41 @@
+﻿
 
+.main-content {
+    min-height: calc(100vh - 196px);
+}
 
-div ::deep.hx-tree-view {
+.sidebar ::deep.hx-sidebar-item.sidebar-level-1 {
+    margin-left: 15px !important;
+}
+
+.sidebar ::deep.hx-sidebar-item.sidebar-level-2 {
+    margin-left: 30px !important;
+}
+
+.sidebar ::deep.hx-sidebar-item.sidebar-level-3 {
+    margin-left: 45px !important;
+}
+
+/* Animation */
+.sidebar ::deep.hx-sidebar-subitems.collapse {
+    display: block;
+    height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: height 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+}
+
+.sidebar ::deep.hx-sidebar-subitems.collapsing {
+    height: 0 !important;
+    opacity: 0;
+    transform: translateY(-5px);
+    overflow: hidden;
+    transition: height 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+}
+
+.sidebar ::deep.hx-sidebar-subitems.collapse.show {
     height: auto;
+    opacity: 1;
+    transform: translateY(0);
 }
