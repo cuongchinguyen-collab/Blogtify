@@ -26,42 +26,23 @@ jobs:
       - name: Build solution
         run: dotnet build Blogtify.sln --configuration Release --no-restore
 
-      # Publish server + client (Release)
       - name: Publish Server (with default client build)
         run: dotnet publish Blogtify/Blogtify/Blogtify.csproj -c Release -o ./publish
 
-      # Publish client fallback (ReleaseCompat)
       - name: Publish Client ReleaseCompat
         run: dotnet publish Blogtify/Blogtify.Client/Blogtify.Client.csproj -c ReleaseCompat -o ./publishCompat --no-restore
 
-      # Copy compat framework into server publish
       - name: Copy compat framework
         run: xcopy ".\publishCompat\wwwroot\_framework" ".\publish\wwwroot\_frameworkCompat" /I /E /Y
         shell: cmd
 
-      - name: Deploy with MSDeploy
-        shell: pwsh
-        run: |
-          $password   = "${{ secrets.PASSWORD }}"
-          $publishFolder = "${{ github.workspace }}\publish"
-
-          if (-not $password -or $password -eq "") { throw "Error: PASSWORD secret is not set, empty, or invalid" }
-
-          $publishFolder = $publishFolder -replace '\\', '/'
-
-          $msdeploy = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
-          $arguments = @(
-            "-source:contentPath=`"$publishFolder`"",
-            ("-dest:contentPath=`"site36496`"," +
-             "computerName=`"https://site36496.siteasp.net:8172/msdeploy.axd?site=site36496`"," +
-             "userName=`"site36496`"," +
-             "password=`"$password`"," +
-             "authType=Basic," +
-             "includeAcls=False"),
-            "-verb:sync",
-            "-enableRule:DoNotDeleteRule",
-            "-enableRule:AppOffline",
-            "-verbose"
-          )
-
-          Start-Process -FilePath $msdeploy -ArgumentList $arguments -NoNewWindow -Wait
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: symphonix.somee.com
+          username: chicuongk21
+          password: ${{ secrets.PASSWORD }}
+          protocol: ftp
+          port: 21
+          local-dir: ./publish/
+          server-dir: /www.symphonix.somee.com/
