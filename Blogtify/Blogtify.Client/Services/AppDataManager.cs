@@ -1,6 +1,5 @@
 ﻿using Blogtify.Client.Models;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using System.Reflection;
 
 namespace Blogtify.Client.Services;
@@ -11,21 +10,82 @@ public static class AppDataManager
 
     public static int GetTotalPosts(string query, List<string> categories)
     {
-        return GetAllPosts()
-            .Where(p => p.Title.Contains(query, StringComparison.OrdinalIgnoreCase))
-            .Where(p => categories.Count == 0 || categories.Any(c => p.Category != null && p.Category.Name.ToLower() == c.ToLower()))
-            .Count();
+        var posts = GetAllPosts();
+
+        query ??= string.Empty;
+
+        if (categories == null || categories.Count == 0)
+        {
+            return posts.Count(p => (p.Title?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false));
+        }
+
+        var allowed = BuildAllowedCategorySet(categories);
+
+        return posts.Count(p =>
+            (p.Title?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false)
+            && p.Category != null
+            && allowed.Contains(p.Category.Name));
     }
 
     public static List<PostDto> GetPosts(int page, int pageSize, string query, List<string> categories)
     {
-        return GetAllPosts()
-                .Where(p => p.Title.Contains(query, StringComparison.OrdinalIgnoreCase))
-                .Where(p => categories.Count == 0 || categories.Any(c => p.Category != null && p.Category.Name.ToLower() == c.ToLower()))
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
+        var posts = GetAllPosts().AsEnumerable();
+
+        query ??= string.Empty;
+
+        if (categories != null && categories.Count > 0)
+        {
+            var allowed = BuildAllowedCategorySet(categories);
+            posts = posts.Where(p => p.Category != null && allowed.Contains(p.Category.Name));
+        }
+
+        posts = posts.Where(p => (p.Title?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false));
+
+        return posts
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
     }
+
+    private static HashSet<string> BuildAllowedCategorySet(List<string> selectedCategoryNames)
+    {
+        var res = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var sel in selectedCategoryNames)
+        {
+            var node = AppDataManager.AllCategories
+                        .FirstOrDefault(c => string.Equals(c.Name, sel, StringComparison.OrdinalIgnoreCase));
+
+            if (node != null)
+            {
+                foreach (var name in GetDescendantNames(node))
+                {
+                    res.Add(name);
+                }
+            }
+            else
+            {
+                res.Add(sel);
+            }
+        }
+
+        return res;
+    }
+
+    private static IEnumerable<string> GetDescendantNames(CategoryDto category)
+    {
+        yield return category.Name;
+
+        var children = category.GetSubCategories();
+        if (children == null) yield break;
+
+        foreach (var child in children)
+        {
+            foreach (var n in GetDescendantNames(child))
+                yield return n;
+        }
+    }
+
 
     public static PostDto? GetPostByRoute(string route)
     {

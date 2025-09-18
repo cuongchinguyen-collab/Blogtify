@@ -13,7 +13,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Havit.Blazor.Components.Web.Bootstrap" Version="4.14.1" />
-		<PackageReference Include="Markdig" Version="0.42.0" />
 		<PackageReference Include="MD2RazorGenerator" Version="1.2.2">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -29,6 +28,9 @@
 	<ItemGroup>
 		<None Update="Components\BackToTopButton.razor.js">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Components\SettingsButton.razor.js">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="Layout\BlogPostLayout.razor.js">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>

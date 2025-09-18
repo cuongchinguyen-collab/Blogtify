@@ -5,33 +5,54 @@
 
 <div class="container-fluid">
 
+    <!-- AppBar -->
     <div class="position-fixed top-0 start-0 w-100 d-flex align-items-center py-1 px-2 appbar-container"
          style="z-index: 100; background: rgba(250,250,250,0.95)">
+        <!-- toggle sidebar -->
+        <HxButton Color="ThemeColor.Primary" Size="ButtonSize.Regular"
+                  OnClick="() => offcanvasComponent.ShowAsync()" Icon="@BootstrapIcon.List"
+                  CssClass="me-2 d-lg-none">
+        </HxButton>
+
         <div class="flex-grow-1">
             <AppBar />
         </div>
     </div>
 
     <div class="pt-5 px-0">
-        <div class="row pt-4 mt-4 mx-2">
-            <!-- Sidebar -->
+        <div class="row pt-4 mt-4">
+
+            <!-- Sidebar desktop -->
             <div class="col-lg-2 p-0 d-none d-lg-block">
-                <div class="sidebar">
-                    <HxButton Color="ThemeColor.Primary" Size="ButtonSize.Regular" OnClick="() => Collapsed = !Collapsed">
-                        <HxIcon Icon="@(Collapsed? BootstrapIcon.List: BootstrapIcon.X)" />
-                    </HxButton>
-                    <HxSidebar @bind-Collapsed="Collapsed">
-                        <ItemsTemplate>
-                            @foreach (var item in sidebarItems)
-                            {
-                                @RenderSidebarItem(item)
-                            }
-                        </ItemsTemplate>
-                    </HxSidebar>
+                <div class="sidebar desktop">
+                    <HxTreeView Items="@sidebarItems"
+                                ItemInitialExpandedSelector="@(p => p.Children.Any())"
+                                ItemTitleSelector="item => item.Text"
+                                ItemIconSelector="item => item.Icon"
+                                ItemCssClass="py-2 fs-6"
+                                SelectedItemChanged="@((SidebarItem item) => OnSelectedItemChanged(item))"
+                                ItemChildrenSelector="item => item.Children">
+                    </HxTreeView>
                 </div>
             </div>
 
-            <!-- Body -->
+            <!-- Sidebar mobile -->
+            <HxOffcanvas Placement="OffcanvasPlacement.Start" @ref="offcanvasComponent" Size="OffcanvasSize.Small">
+                <BodyTemplate>
+                    <div class="sidebar">
+                        <HxTreeView Items="@sidebarItems"
+                                    ItemInitialExpandedSelector="@(p => p.Children.Any())"
+                                    ItemTitleSelector="item => item.Text"
+                                    ItemIconSelector="item => item.Icon"
+                                    ItemCssClass="py-2 fs-6"
+                                    SelectedItemChanged="@((SidebarItem item) => OnSelectedItemChanged(item))"
+                                    ItemChildrenSelector="item => item.Children">
+                        </HxTreeView>
+                    </div>
+                </BodyTemplate>
+            </HxOffcanvas>
+
+            <!-- Main body -->
             <div class="col-lg-10 ps-1 main-content">
                 @Body
             </div>
@@ -42,12 +63,13 @@
         </div>
     </div>
 
+    <SettingsButton />
     <BackToTopButton />
 </div>
 
 @code {
     private SidebarItem[] sidebarItems = [];
-    private bool Collapsed = false;
+    private HxOffcanvas offcanvasComponent = new();
 
     protected override void OnInitialized()
     {
@@ -68,7 +90,7 @@
         var item = new SidebarItem(
             text: category.Name,
             icon: category.GetSubCategories().Any() ? BootstrapIcon.Hdd : BootstrapIcon.FileEarmark,
-            href: category.GetSubCategories().Any() ? null : $"?categories={category.Name}",
+            href: $"?categories={category.Name}",
             hint: category.Name
         );
 
@@ -81,46 +103,20 @@
         return item;
     }
 
-    private RenderFragment RenderSidebarItem(SidebarItem item, int level = 0) => builder =>
+    private async Task OnSelectedItemChanged(SidebarItem item)
     {
-        builder.OpenComponent<HxSidebarItem>(0);
-
-        builder.AddAttribute(1, "Icon", item.Icon);
-
         if (!string.IsNullOrEmpty(item.Href))
         {
-            builder.AddAttribute(2, "Href", item.Href);
+            NavigationManager.NavigateTo(item.Href);
         }
 
-        builder.AddAttribute(3, "ContentTemplate",
-            (RenderFragment<SidebarItemContentTemplateContext>)(context => contentBuilder =>
-            {
-                contentBuilder.AddContent(4, item.Text);
-
-                if (item.Children?.Any() == true)
-                {
-                    contentBuilder.OpenComponent<HxBadge>(5);
-                    contentBuilder.AddAttribute(6, "Color", ThemeColor.Primary);
-                    contentBuilder.AddAttribute(7, "CssClass", "ms-2");
-                    contentBuilder.AddContent(8, item.Children.Count());
-                    contentBuilder.CloseComponent();
-                }
-            }));
-
-        if (item.Children?.Any() == true)
+        if (offcanvasComponent != null)
         {
-            builder.AddAttribute(9, "ChildContent", (RenderFragment)(childBuilder =>
-            {
-                foreach (var child in item.Children)
-                {
-                    childBuilder.AddContent(10, RenderSidebarItem(child, level + 1));
-                }
-            }));
+            await offcanvasComponent.HideAsync();
         }
 
-        builder.AddAttribute(11, "CssClass", $"sidebar-level-{level}");
-        builder.CloseComponent();
-    };
+        StateHasChanged();
+    }
 
     public class SidebarItem
     {
@@ -139,4 +135,3 @@
         public SidebarItem[] Children { get; set; } = [];
     }
 }
-

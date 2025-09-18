@@ -1,0 +1,104 @@
+﻿@inject IThemeProvider ThemeProvider
+@inject IJSRuntime JSRuntime
+
+<div class="settings-btn position-fixed d-inline-block" id="settingsWrapper">
+    <HxButton OnClick="ToggleSettingsMenu"
+              Icon="BootstrapIcon.GearFill"
+              Color="ThemeColor.Warning" />
+
+    @if (showSettingsMenu)
+    {
+        <ul class="dropdown-menu show" style="position: absolute; bottom: 100%; left: 100%; transform: translate(-10px, -10px);">
+
+            <li class="dropdown-header">Settings</li>
+            <li>
+                <a class="dropdown-item" href="#" @onclick="ToggleThemeMenu">
+                    Đổi Theme
+                </a>
+            </li>
+
+            @if (showThemeMenu)
+            {
+                <li>
+                    <HxListGroup>
+                        @foreach (var theme in Enum.GetNames(typeof(Theme)))
+                        {
+                            <HxListGroupItem OnClick="(() => ChangeTheme(theme))">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>@theme</span>
+                                    @if (theme == selectedTheme)
+                                    {
+                                        <HxIcon Icon="@BootstrapIcon.CheckCircleFill" CssClass="text-success fs-6" />
+                                    }
+                                </div>
+                            </HxListGroupItem>
+                        }
+                    </HxListGroup>
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    private bool showSettingsMenu = false;
+    private bool showThemeMenu = false;
+    private string selectedTheme = "Yeti";
+    private DotNetObjectReference<object>? selfRef;
+    private IJSObjectReference? _module;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+
+            var selectedTheme = (await ThemeProvider.GetThemeAsync()).ToString() ?? "Yeti";
+            await ChangeTheme(selectedTheme, false);
+            StateHasChanged();
+
+            _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./Components/SettingsButton.razor.js");
+
+            selfRef = DotNetObjectReference.Create<object>(this);
+            await _module.InvokeVoidAsync("outsideClickHelper.register", "#settingsWrapper",
+                DotNetObjectReference.Create(this));
+        }
+    }
+
+    private void ToggleSettingsMenu()
+    {
+        showSettingsMenu = !showSettingsMenu;
+        if (!showSettingsMenu)
+            showThemeMenu = false;
+    }
+
+    private void ToggleThemeMenu()
+    {
+        showThemeMenu = !showThemeMenu;
+    }
+
+
+    private async Task ChangeTheme(string theme, bool closeMenu = true)
+    {
+        selectedTheme = theme;
+
+        var themeEnum = Enum.Parse<Theme>(theme);
+        await ThemeProvider.SetThemeAsync(themeEnum);
+
+        if (closeMenu)
+        {
+            showThemeMenu = false;
+            showSettingsMenu = true;
+        }
+    }
+
+    [JSInvokable]
+    public void CloseMenus()
+    {
+        if (showSettingsMenu)
+        {
+            showSettingsMenu = false;
+            showThemeMenu = false;
+            StateHasChanged();
+        }
+    }
+}

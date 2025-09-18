@@ -43,7 +43,7 @@
     private bool _isLoading = false;
     private bool _hasMore = true;
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
         _totalPost = AppDataManager.GetTotalPosts(Query ?? string.Empty, Categories.ToList());
         LoadPosts();
@@ -53,7 +53,7 @@
     {
         _isLoading = true;
 
-        _posts.AddRange(AppDataManager.GetPosts(Page, Constants.PageSize, Query ?? string.Empty, Categories.ToList()));
+        _posts = AppDataManager.GetPosts(Page, Constants.PageSize, Query ?? string.Empty, Categories.ToList());
 
         _isLoading = false;
         _hasMore = _posts.Count()

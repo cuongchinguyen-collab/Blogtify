@@ -1,0 +1,15 @@
+
+
+.settings-btn {
+    position: fixed;
+    bottom: 60px;
+    left: 40px;
+    z-index: 1000;
+}
+
+    .settings-btn ::deep .btn {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+        border-radius: 50%;
+    }

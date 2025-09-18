@@ -8,6 +8,6 @@
 };
 
 (function () {
-    var theme = localStorage.getItem("Theme") || "Yeti";
+    const theme = localStorage.getItem("Theme") || "Yeti";
     themeSwitcher.setTheme(theme);
 })();
