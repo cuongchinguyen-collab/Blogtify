@@ -74,7 +74,7 @@
         {
             _isLoading = true;
             _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "/Layout/BlogPostLayout.razor.js");
-            //await _module.InvokeVoidAsync("addDisqusComments");
+            await _module.InvokeVoidAsync("addDisqusComments");
 
             _isLoading = false;
             StateHasChanged();
