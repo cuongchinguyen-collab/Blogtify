@@ -1,7 +1,7 @@
 ---
-url: [/webhook]
+url: [/webhook123]
 title: "Tìm hiểu về Webhook và cách triển khai"
-$attribute: Category("Blazor", "Web")
+$attribute: Category("Blazor", "web")
 $layout: Blogtify.Client.Layout.BlogPostLayout
 ---
 
