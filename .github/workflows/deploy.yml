@@ -36,6 +36,9 @@ jobs:
         run: xcopy ".\publishCompat\wwwroot\_framework" ".\publish\wwwroot\_frameworkCompat" /I /E /Y
         shell: cmd
 
+      - name: Create app_offline.htm
+        run: echo "Application is offline for deployment" > ./publish/app_offline.htm
+
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -46,3 +49,6 @@ jobs:
           port: 21
           local-dir: ./publish/
           server-dir: /www.symphonix.somee.com/
+
+      - name: Remove app_offline.htm
+        run: rm ./publish/app_offline.htm
