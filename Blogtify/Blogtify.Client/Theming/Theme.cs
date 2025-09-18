@@ -9,5 +9,9 @@ public enum Theme
     Materia,
     Simplex,
     Sketchy,
-    SandStone
+    SandStone,
+    Slate,
+    Superhero,
+    Vapor,
+    Solar
 }
